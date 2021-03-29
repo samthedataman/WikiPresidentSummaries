@@ -1,0 +1,25 @@
+from bs4 import BeautifulSoup
+import wikipedia
+import requests as r
+import pandas as pd
+import urllib.request
+import numpy as np
+request = r.get("https://en.wikipedia.org/wiki/List_of_presidents_of_the_United_States")
+soup = BeautifulSoup(request.content, 'html.parser')
+
+df = soup.find('table',{"class":'wikitable'})
+#obj = obj.find('div',{"class":'title'})
+df=pd.read_html(str(df))
+# convert list to dataframe
+df=pd.DataFrame(df[0])
+#Get All unique Presidents Names
+pres_list = df['President.1'].unique().tolist()
+#For loop that calls on every president availble and generates a summary of their lives from Wikepidea API Package
+for i in pres_list :
+  try:
+      presidents = wikipedia.summary(i)
+      print("******",presidents)
+  except wikipedia.exceptions.PageError:
+    continue
+  except wikipedia.exceptions.DisambiguationError:
+    continue  
